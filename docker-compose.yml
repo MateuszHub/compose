@@ -1,0 +1,42 @@
+version: "3.7"
+
+services:
+    frontend:
+        image: mateuszhub/react:latest
+        ports:
+            - 3000:3000
+        expose:
+            - 3000
+        networks: 
+            - shared
+        environment: 
+            REACT_APP_BACKEND_HOST: http://localhost:9000
+
+
+    backend:
+        image: mateuszhub/scala:latest
+        expose:
+            - 9443
+            - 9000
+        ports:
+            - 9000:9000
+            - 9443:9443
+        networks: 
+            - shared
+        environment: 
+            BACKEND_HOST: http://localhost:9000
+            DATABASE_HOST: jdbc:mysql://mysql:3306/gamestore?useSSL=false&requireSSL=false&serverTimezone=UTC
+
+    mysql:
+        image: mateuszhub/mysql:2
+        expose:
+            - 3306
+        command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+        restart: always
+        environment: 
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: gamestore
+        networks: 
+            - shared
+networks:
+  shared: {}
